@@ -59,31 +59,31 @@ export function render(document, options = {}) {
                 : elements;
         };
 
-        const renderNode = node => {
+        const renderNode = (node, index) => {
             if (node.type === 'blok') {
                 const { body } = node.attrs;
                 return body.map(({ component, ...props }) => {
                     const resolver = blokResolvers[component];
                     const element = resolver
-                        ? resolver(props)
-                        : defaultBlokResolver(component, props);
+                        ? resolver(props, index)
+                        : defaultBlokResolver(component, props, index);
                     return addKey(element);
                 });
             } else {
                 let childNode;
                 if (node.type === 'text') {
-                    childNode = textResolver(node.text);
+                    childNode = textResolver(node.text, index);
                 } else {
                     const resolver = nodeResolvers[node.type];
                     childNode = resolver
-                        ? addKey(resolver(renderNodes(node.content), node.attrs))
+                        ? addKey(resolver(renderNodes(node.content), index, node.attrs))
                         : null;
                 }
                 const marks = node.marks ?? [];
                 return marks.reduceRight((children, mark) => {
                     const resolver = markResolvers[mark.type];
                     return resolver
-                        ? addKey(resolver(children, mark.attrs))
+                        ? addKey(resolver(children, index, mark.attrs))
                         : children;
                 }, childNode);
             }
@@ -100,28 +100,28 @@ export function render(document, options = {}) {
     return null;
 }
 
-const simpleNodeResolver = element => children =>
+const simpleNodeResolver = element => (children, index) =>
     children != null ? React.createElement(element, null, children) : null;
 
-const emptyNodeResolver = element => () =>
+const emptyNodeResolver = element => (index) =>
     React.createElement(element);
 
-const headingNodeResolver = (children, props) =>
+const headingNodeResolver = (children, index, props) =>
     React.createElement(`h${props.level}`, null, children);
 
-const imageNodeResolver = (children, props) =>
+const imageNodeResolver = (children, index, props) =>
     React.createElement('img', props, children);
 
-const codeblockNodeResolver = (children, props) => {
+const codeblockNodeResolver = (children, index, props) => {
     const codeProps = { className: props.class };
     const code = React.createElement('code', codeProps, children);
     return React.createElement('pre', null, code);
 };
 
-const simpleMarkResolver = element => children =>
+const simpleMarkResolver = element => (children, index) =>
     React.createElement(element, null, children);
 
-const linkMarkResolver = (children, { linktype, href, target }) => {
+const linkMarkResolver = (children, index, { linktype, href, target }) => {
     const props = {
         href: linktype === 'email' ? `mailto:${href}` : href,
         target,
@@ -129,7 +129,7 @@ const linkMarkResolver = (children, { linktype, href, target }) => {
     return React.createElement('a', props, children);
 };
 
-const styledMarkResolver = (children, props) =>
+const styledMarkResolver = (children, index, props) =>
     React.createElement('span', { className: props.class }, children);
 
 const defaultNodeResolvers = {

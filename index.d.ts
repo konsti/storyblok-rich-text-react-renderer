@@ -77,20 +77,22 @@ declare module "storyblok-rich-text-react-renderer" {
 
   export interface RenderOptions {
     blokResolvers?: {
-      [key: string]: (props: Record<string, unknown>) => JSX.Element | null;
+      [key: string]: (props: Record<string, unknown>, index: number) => JSX.Element | null;
     };
     defaultBlokResolver?: (
       name: string,
-      props: Record<string, unknown> & { _uid: string }
+      props: Record<string, unknown> & { _uid: string },
+      index: number
     ) => JSX.Element | null;
     markResolvers?: {
-      [MARK_BOLD]?: (children: ReactNode) => JSX.Element | null;
-      [MARK_CODE]?: (children: ReactNode) => JSX.Element | null;
-      [MARK_ITALIC]?: (children: ReactNode) => JSX.Element | null;
-      [MARK_STRIKE]?: (children: ReactNode) => JSX.Element | null;
-      [MARK_UNDERLINE]?: (children: ReactNode) => JSX.Element | null;
+      [MARK_BOLD]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [MARK_CODE]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [MARK_ITALIC]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [MARK_STRIKE]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [MARK_UNDERLINE]?: (children: ReactNode, index: number) => JSX.Element | null;
       [MARK_LINK]?: (
         children: ReactNode,
+        index: number,
         props: {
           linktype?: string;
           href?: string;
@@ -101,36 +103,40 @@ declare module "storyblok-rich-text-react-renderer" {
       ) => JSX.Element | null;
       [MARK_STYLED]?: (
         children: ReactNode,
+        index: number,
         props: { class?: string }
       ) => JSX.Element | null;
     };
     nodeResolvers?: {
-      [NODE_BR]?: () => JSX.Element | null;
+      [NODE_BR]?: (index: number) => JSX.Element | null;
       [NODE_CODEBLOCK]?: (
         children: ReactNode,
+        index: number,
         props: { class: string }
       ) => JSX.Element | null;
       [NODE_HEADING]?: (
         children: ReactNode,
+        index: number,
         props: { level: 1 | 2 | 3 | 4 | 5 | 6 }
       ) => JSX.Element | null;
-      [NODE_HR]?: () => JSX.Element | null;
+      [NODE_HR]?: (index: number) => JSX.Element | null;
       [NODE_IMAGE]?: (
         children: ReactNode,
+        index: number,
         props: {
           alt?: string;
           title?: string;
           src?: string;
         }
       ) => JSX.Element | null;
-      [NODE_LI]?: (children: ReactNode) => JSX.Element | null;
-      [NODE_OL]?: (children: ReactNode) => JSX.Element | null;
-      [NODE_PARAGRAPH]?: (children: ReactNode) => JSX.Element | null;
-      [NODE_QUOTE]?: (children: ReactNode) => JSX.Element | null;
-      [NODE_UL]?: (children: ReactNode) => JSX.Element | null;
+      [NODE_LI]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [NODE_OL]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [NODE_PARAGRAPH]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [NODE_QUOTE]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [NODE_UL]?: (children: ReactNode, index: number) => JSX.Element | null;
     };
-    defaultStringResolver?: (str: string) => JSX.Element;
-    textResolver?: (str: string) => string;
+    defaultStringResolver?: (str: string, index: number) => JSX.Element;
+    textResolver?: (str: string, index: number) => string;
   }
 
   export function render(
