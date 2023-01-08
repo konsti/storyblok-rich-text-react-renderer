@@ -108,32 +108,35 @@ declare module "storyblok-rich-text-react-renderer" {
       ) => JSX.Element | null;
     };
     nodeResolvers?: {
-      [NODE_BR]?: (index: number) => JSX.Element | null;
+      [NODE_BR]?: (index: number, parent: StoryblokRichtextContentType) => JSX.Element | null;
       [NODE_CODEBLOCK]?: (
         children: ReactNode,
         index: number,
+        parent: StoryblokRichtextContentType,
         props: { class: string }
       ) => JSX.Element | null;
       [NODE_HEADING]?: (
         children: ReactNode,
         index: number,
+        parent: StoryblokRichtextContentType,
         props: { level: 1 | 2 | 3 | 4 | 5 | 6 }
       ) => JSX.Element | null;
-      [NODE_HR]?: (index: number) => JSX.Element | null;
+      [NODE_HR]?: (index: number, parent: StoryblokRichtextContentType) => JSX.Element | null;
       [NODE_IMAGE]?: (
         children: ReactNode,
         index: number,
+        parent: StoryblokRichtextContentType,
         props: {
           alt?: string;
           title?: string;
           src?: string;
         }
       ) => JSX.Element | null;
-      [NODE_LI]?: (children: ReactNode, index: number) => JSX.Element | null;
-      [NODE_OL]?: (children: ReactNode, index: number) => JSX.Element | null;
-      [NODE_PARAGRAPH]?: (children: ReactNode, index: number) => JSX.Element | null;
-      [NODE_QUOTE]?: (children: ReactNode, index: number) => JSX.Element | null;
-      [NODE_UL]?: (children: ReactNode, index: number) => JSX.Element | null;
+      [NODE_LI]?: (children: ReactNode, index: number, parent: StoryblokRichtextContentType) => JSX.Element | null;
+      [NODE_OL]?: (children: ReactNode, index: number, parent: StoryblokRichtextContentType) => JSX.Element | null;
+      [NODE_PARAGRAPH]?: (children: ReactNode, index: number, parent: StoryblokRichtextContentType) => JSX.Element | null;
+      [NODE_QUOTE]?: (children: ReactNode, index: number, parent: StoryblokRichtextContentType) => JSX.Element | null;
+      [NODE_UL]?: (children: ReactNode, index: number, parent: StoryblokRichtextContentType) => JSX.Element | null;
     };
     defaultStringResolver?: (str: string, index: number) => JSX.Element;
     textResolver?: (str: string, index: number) => string;

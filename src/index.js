@@ -50,16 +50,18 @@ export function render(document, options = {}) {
                 ? React.cloneElement(element, { key: currentKey++ })
                 : element;
 
-        const renderNodes = nodes => {
+        const renderNodes = (nodes, parent) => {
             const elements = nodes
-                ? nodes.map(renderNode).filter(node => node != null)
+                ? nodes
+                    .map((node, index) => renderNode(node, index, parent))
+                    .filter(node => node != null)
                 : null;
             return Array.isArray(elements) && elements.length === 0
                 ? null
                 : elements;
         };
 
-        const renderNode = (node, index) => {
+        const renderNode = (node, index, parent) => {
             if (node.type === 'blok') {
                 const { body } = node.attrs;
                 return body.map(({ component, ...props }) => {
@@ -76,7 +78,7 @@ export function render(document, options = {}) {
                 } else {
                     const resolver = nodeResolvers[node.type];
                     childNode = resolver
-                        ? addKey(resolver(renderNodes(node.content), index, node.attrs))
+                        ? addKey(resolver(renderNodes(node.content, node.type), index, parent, node.attrs))
                         : null;
                 }
                 const marks = node.marks ?? [];
@@ -106,13 +108,13 @@ const simpleNodeResolver = element => (children, index) =>
 const emptyNodeResolver = element => (index) =>
     React.createElement(element);
 
-const headingNodeResolver = (children, index, props) =>
+const headingNodeResolver = (children, index, parent, props) =>
     React.createElement(`h${props.level}`, null, children);
 
-const imageNodeResolver = (children, index, props) =>
+const imageNodeResolver = (children, index, parent, props) =>
     React.createElement('img', props, children);
 
-const codeblockNodeResolver = (children, index, props) => {
+const codeblockNodeResolver = (children, index, parent, props) => {
     const codeProps = { className: props.class };
     const code = React.createElement('code', codeProps, children);
     return React.createElement('pre', null, code);
